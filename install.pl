@@ -1,5 +1,7 @@
 #! /usr/bin/perl -w 
-
+# Author: Alfredo Velasco
+# This installs the hebbPlot.
+# It does this by changing the current directory.
 use File::Copy;
 use CWD;
 my $currentDir = `pwd`;

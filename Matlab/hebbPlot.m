@@ -1,7 +1,7 @@
 
 
 function [w, markIndex] = hebbPlot(fileName, sampleNum, alpha, marks, e, ...
-    outFile, histFile)
+    colorMapIn ,outFile, histFile)
 %
 % Author: Hani Zakaria Girgis, PhD
 % The Bioinformatics Toolsmith Laboratory
@@ -62,7 +62,7 @@ myR = size(p0,2) / sampleNum;
 myC = sampleNum;
 
 [s, markIndex] = sortASampleHierarchical(w, myR, myC, e);
-F = plotASample( s, myR, myC, marks(markIndex) );
+F = plotASample( s, myR, myC, marks(markIndex), colorMapIn );
 saveAsPdf(F, outFile);
 
 % This better work
@@ -70,7 +70,7 @@ for i =1:10:100
     hani = reshape(p0(i, :), myR, myC);
     hani = hani(markIndex, :);
     hani = reshape(hani, 1, myR * myC);
-    G = plotASample(hani, myR, myC, marks(markIndex));
+    G = plotASample(hani, myR, myC, marks(markIndex), colorMapIn);
     newOutFile = strrep(outFile, '.pdf', strcat(num2str(i), '.pdf'));
     saveAsPdf(G, newOutFile);
 end

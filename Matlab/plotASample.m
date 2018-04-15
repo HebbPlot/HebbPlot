@@ -1,22 +1,23 @@
 
 
-function h = plotASample( m, r, c, markLabels, varargin)
+function h = plotASample( m, r, c, markLabels, colormapIn, varargin)
 %
 % Author: Hani Zakaria Girgis, PhD
 % The Bioinformatics Toolsmith Laboratory
 % The University of Tulsa
-%
+%heb
 %PLOTASAMPLE convert a vector to a matrix. Then, it makes an image of it.
 
 s = reshape(m, r, c);
 
 % Plot the unsorted matrix
-if nargin > 5
-    h = figure; imagesc(s, varargin{1}); colormap(gray);
+if nargin > 6
+    h = figure; imagesc(s, varargin{1}); colormap(colormapIn);
 else
-    h = figure; imagesc(s, [-1 1]); colormap(gray);
+    h = figure; imagesc(s, [-1 1]); colormap(colormapIn);
 end
 
+colorbar;
 
 %Set the tick labels
 part1 = floor(c/2):-1:1;
@@ -32,6 +33,7 @@ set(gca, 'XTick', xTick([1 center-q center center+q c]), 'XTickLabel', ...
 
 set(gca, 'YTick', 1:r, 'YTickLabel', markLabels);
 set(gca, 'FontName', 'Times');
+
 
 xlabel('Uniform Samples', 'interpreter', 'latex', 'FontName', 'Times');
 ylabel('Marks', 'interpreter', 'latex', 'FontName', 'Times');

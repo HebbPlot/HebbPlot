@@ -14,23 +14,9 @@ use Cwd;
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT =
-qw(drive hello mergeCoords min max downloadAndDecompress mergeDir downloadRegions);
-
-# This method downloads and decompresses the epigenome files
-# It needs the URL for the epigenome, a file that specifically
-# Arguments given as ($epigenomeLink, $epigenomeLinkFile, $outputDirectory)
-sub drive {
-	( my $parentLink, my $inputFile, my $mainDir ) = @_;
-
-	downloadAndDecompress( $parentLink, $inputFile, $mainDir );
-
-	mergeDir($mainDir);
-}
+qw(mergeCoords min max mergeDir);
 
 # This will eliminate overlaps in a given $inputFile and print out the results into an $outputFile
-# If $outputFile is the same as $inputFile, it will be renamed to have an M in it.
-# THIS IS THE DEFAULT ACTION AND OTHER SUBROUTINES ARE BASED OFF OF THIS ASSUMPTION!
-# Therefore, if $outputFile should be the same as $inputFile if it'll be used in this project.
 # The arguments are taken in as ($inputFile, $outputFile)
 #
 #      It turns this
@@ -86,72 +72,6 @@ sub mergeCoords {
 
 }
 
-#
-# $inListRef is a list of references to lists
-# It looks like this: [[chr, start, end], [chr, start, end], [chr, start, end]]
-# This will take the list and merge it.
-# Ex.
-# chr1	1	10
-# chr1	5	15
-# chr1	16	20
-# chr1	25	30
-# chr2	10	20
-# chr2	15	25
-# chr2	30	40
-# =====>
-# chr1	1	20
-# chr1	25	30
-# chr2	10	25
-# chr2	30	40
-sub mergeCoordsLists {
-	( my $inListRef ) = @_;
-	my @inList = @$inListRef;
-
-	my @outList = ();
-	if ( @inList > 0 ) {
-		my @region = @{ $inList[0] };
-		my @temp;
-		for ( my $i = 1 ; $i <= $#inList ; $i++ ) {
-			@temp = @{ $inList[$i] };
-
-			if ( @temp == 0 ) { die "Invalid region\n"; }
-
-			if ( $region[0] eq $temp[0]
-				&& isOverlapping( $region[1], $region[2], $temp[1], $temp[2] ) )
-			{
-				$region[1] = min( $region[1], $temp[1] );
-				$region[2] = max( $region[2], $temp[2] );
-			}
-			else {
-
-				print "@region\n";
-
-				push( @outList, [ $region[0], $region[1], $region[2] ] );
-				@region = @temp;
-
-			}
-		}
-		if ( $region[0] eq $temp[0]
-			&& isOverlapping( $region[1], $region[2], $temp[1], $temp[2] ) )
-		{
-			push( @outList, [ $region[0], $region[1], $region[2] ] );
-		}
-
-	}
-	return @outList;
-}
-
-
-# returns a list of files in a given directory
-# Note: Don't include the '/' at the end
-# arguments given as ($parentDirectory)
-sub listFiles {
-	( my $parentDir ) = @_;
-	my $a = `find -f $parentDir`;
-	$_ = $a;
-	$a =~ s/\/\//\//g;
-	return split( "\n", $a );
-}
 
 # returns whether or not the epigenomes are overlapping
 # based on their starts and ends
@@ -173,7 +93,7 @@ sub isOverlapping {
 }
 
 # Given a directory, it will perform mergeCoords() on every file
-# Arguments given as ($parentDir)
+# Arguments given as ($parentDir, $destDir)
 # 
 sub mergeDir {
 	my ( $fol, $dstDir ) = @_;

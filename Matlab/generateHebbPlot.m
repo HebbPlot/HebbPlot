@@ -1,6 +1,6 @@
 
 
-function generateHebbPlot(inOutDir, vLines, eLines)
+function [w, markIndex] = generateHebbPlot(inOutDir, vLines, eLines, colorMapIn)
 %
 % Author: Hani Zakaria Girgis, PhD
 % Author: Alfredo Velasco II
@@ -30,6 +30,6 @@ learningRate = ((10000 / numRows) * 0.001);
 
 % hebbPlot(matrixFile, vLines, 0.001, markList, eLines, hebbFile, histFile);
 [w, markIndex] = hebbPlot(matrixFile, vLines, learningRate, markList, eLines, ...
-    hebbFile, histFile);
+    colorMapIn ,hebbFile, histFile);
 save(wFile, 'w');
 end

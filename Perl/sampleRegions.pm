@@ -24,6 +24,9 @@ my $numSamples;
 # parameter and output the samples into the output file
 sub sampleFile {
 	my ( $inFile, $outFile, $numSamples ) = @_;
+	if ($numSamples <= 0 or ! ($numSamples =~ /^\d+\z/)){
+		die ("$numSamples is not a valid number of samples! The number of samples must be a positive integer\n");
+	}
 
 	#print "I am this one\n";
 
@@ -31,6 +34,7 @@ sub sampleFile {
 	open( OUT, ">$outFile" ) or die "Cannot open $outFile: $!\n";
 	my @chromosomeList = ();
 	while (<IN>) {
+		chomp;
 		my $readLine = $_;
 
 		my @initialLine = split("\t",$readLine);
@@ -42,11 +46,11 @@ sub sampleFile {
 # The resulting bed file produced by this tool will only include the first 3 elements in each line.
 		my @line = @initialLine[ 0, 1, 2 ];
 #		print join("\t", @line) . "\n";
-		if ( $#chromosomeList == -1 and not ($readLine eq "\n") ) {
+		if ( $#chromosomeList == -1 and not ($readLine eq "") ) {
 			push @chromosomeList, \@line;
 		}
-		elsif ( @line == 0 or $readLine eq "\n" ) {
-#			print "Empty line!\n";
+		elsif ( @line == 0 or $readLine eq "") {
+			# print "Empty line!\n";
 
 			# When the line is empty
 		}

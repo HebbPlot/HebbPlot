@@ -192,7 +192,7 @@ sub printMatrix {
 	close OUTM;
 }
 
-# Given a reference to a 2D array, it will print them out
+# Given a reference to a 2D array, it will return them
 # column-wise.
 #
 #	Example:
@@ -205,6 +205,7 @@ sub printMatrix {
 #	1	4	7	2	5	8	3	6	9
 #
 # Arguments given as ($arrayReference)
+# This will return a new array or a reference to the array of results
 sub flatten2DArray {
 	my ($array) = @_;
 
@@ -244,18 +245,6 @@ sub fillEmpty {
 	return wantarray ? @result : \@result;
 }
 
-# This takes in a string that's the name of the epigenome file
-# and returns the epigenome.
-# Ex: /Users/ted/mosby/folder1/folder2/stuff1/stuff2/E001/
-# => E001
-# Note: It MUST be in the format /.../E001/
-# Arguments given as (fileName)
-sub trimmedEpiName {
-	my ($name) = @_;
-	$_ = $name;
-	my @dirs = split('/');
-	return substr( $dirs[-1], 0, 4 );
-}
 
 # Downloads the regions given the main link that holds the files, the input file with the names of the regions you want to download,
 # and the directory where you want them stored
@@ -279,24 +268,6 @@ sub downloadRegions {
 	decompress($parentDir);
 }
 
-# This method takes in a directory and returns a list of subdirectories with the format E\d\d\d.
-# Arguments given as ($directory)
-sub getDirs {
-	( my $dir ) = @_;
-	my @files  = listFiles($dir);
-	my @result = ();
-	foreach my $file (@files) {
-		$_ = $file;
-		if (m/(.*E\d{3}\/).*/) {
-			if ( scalar(@result) != 0 && $result[-1] eq $1 ) {
-			}
-			else {
-				push @result, $1;
-			}
-		}
-	}
-	return @result;
-}
 
 # Given a region directory and an expansion rate
 # this subroutine will read the region files
@@ -345,13 +316,16 @@ sub expandRegion {
 	return $expRegDir;
 }
 
-# Given a region file and an expansion rate
+# Given a region file, an expansion rate,
+# and an output file, 
 # this subroutine will read the regions
 # and output their expanded versions by
 # performing the operation on them:
 # length = end - start;
 # start = start + length * expansion
 # end = end - length * expansion
+# These expanded regions will be outputed
+# to the output file
 sub expandRegionFile {
 	my ( $regionFile, $expansion, $outputFile ) = @_;
 
